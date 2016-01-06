@@ -9,7 +9,7 @@ gulp.task('default', function () {
 	var electron = require('electron-connect').server.create();
 	electron.start();
 	gulp.watch(['index.js'], electron.restart);
-	gulp.watch(['index.html', 'forever-dungeon.js', 'src/**'], electron.reload);
+	gulp.watch(['index.html', 'forever-dungeon.js', 'src/**', 'assets/**'], electron.reload);
 	gulp.task('reload:browser', function () {
 		electron.restart();
 	});

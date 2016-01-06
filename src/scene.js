@@ -9,7 +9,7 @@ var scene = new THREE.Scene(),
 	camera = new THREE.OrthographicCamera(windowWidth * ZOOM / -2, windowWidth * ZOOM / 2, windowHeight * ZOOM / 2, windowHeight * ZOOM / -2, -100, 100),
 	renderer = new THREE.WebGLRenderer({ antialias: true });
 
-renderer.setClearColor(0xeeeeee, 1);
+renderer.setClearColor(0xffffff, 1);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 camera.rotation.order = 'ZXY';
@@ -84,23 +84,29 @@ module.exports = {
 		world.player = entity;
 		world.player.avatar = disc;
 		world.entities.push(world.player);
+
+		runTest();
 	},
 	addEntity: function (entity) {
-		var geometry = new THREE.CircleGeometry(entity.radius, 24),
-			material = new THREE.MeshBasicMaterial({ color: entity.debugColor }),
-			disc = new THREE.Mesh(geometry, material);
-		disc.position.set(entity.position.x, entity.position.y, 0);
-		scene.add(disc);
+		// TODO: this is just for testing load the avatar differently
+		if (!entity.avatar) {
+			var geometry = new THREE.CircleGeometry(entity.radius, 24),
+				material = new THREE.MeshBasicMaterial({ color: entity.debugColor }),
+				disc = new THREE.Mesh(geometry, material);
+			disc.position.set(entity.position.x, entity.position.y, 0);
+			scene.add(disc);
+			entity.avatar = disc;
+		} else {
+			entity.avatar.position.set(entity.position.x, entity.position.y, 0);
+			scene.add(entity.avatar);
+		}
 
-		entity.avatar = disc;
 		world.entities.push(entity);
 	}
 };
 
-// this changes the random seed somehow
-var assets = require('./assets');
-
-require('./assets').load(function () {
+var runTest = function () {
+	// this changes the random seed somehow
 	var testPlayerMesh = assets.get('player');
 	var sword = assets.get('sword');
 	var player = world.player;
@@ -128,76 +134,4 @@ require('./assets').load(function () {
 
 	};
 	requestAnimationFrame(f);
-});
-//
-// // TESTING ANIMATIONS
-// // NOTES: when exporting from blender need to reset the pose to rest position
-// //		Clear Pose Transforms in blender to do above
-// // also need to export skeletal as pose not rest
-// // need to only have the object selected in object mode else you get an export error
-// var findBoneByName = function (skeleton, name) {
-// 	var ret;
-// 	_.each(skeleton.bones, function (bone) {
-// 		if (bone.name === name) {
-// 			ret = bone;
-// 		}
-// 	});
-// 	if (!ret) {
-// 		throw new Error('Could not find bone: ' + name);
-// 	}
-// 	return ret;
-// };
-// require('./BlendCharacter');
-// var blendMesh = new THREE.BlendCharacter();
-// // scene.add(leg);
-// // leg.quaternion.copy(camera.quaternion);
-// var loader = new THREE.JSONLoader();
-// loader.load('./src/sword.json', function (geometry, materials) {
-// 	var sword = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: 0xff0000}));
-// 	// sword.scale.zet(2, 2, 2);
-// 	sword.rotation.x = 45 * Math.PI / 180;
-// 	sword.updateMatrix();
-// 	sword.geometry.applyMatrix(sword.matrix);
-// 	scene.add(sword);
-// 	blendMesh.load('./src/sprite.json', function () {
-// 		console.log('loaded sprite.json');
-//
-// 		var player = world.player;
-// 		var running = false;
-//
-// 		var s = 2;
-// 		blendMesh.scale.set(s, s, s);
-// 		// Blender uses z up, three uses y up. compo here
-// 		blendMesh.rotation.x = 90 * Math.PI / 180;
-//
-// 		blendMesh.play('Run', 1);
-// 		// blendMesh.quaternion.copy(camera.quaternion);
-// 		scene.add(blendMesh);
-//
-// 		findBoneByName(blendMesh.skeleton, 'hand.r').add(sword);
-//
-// 		var f = function () {
-// 			blendMesh.update(0.03);
-// 			requestAnimationFrame(f);
-//
-// 			// console.log();
-// 			blendMesh.rotation.y = player.behaviours.traveller.getAngleToDestination() - (270 * Math.PI / 180);
-// 			blendMesh.position.set(player.position.x, player.position.y, 0);
-// 			if (!player.behaviours.traveller.isTravelling()) {
-// 				blendMesh.play('Idle', 0.1);
-// 				running = false;
-// 			} else if (!running && player.behaviours.traveller.isTravelling()) {
-// 				running = true;
-// 				blendMesh.play('Run', 1);
-// 			}
-//
-// 		// blendMesh.updateMatrix();
-// 		// blendMesh.geometry.applyMatrix(blendMesh.matrix);
-// 		};
-// 		requestAnimationFrame(f);
-//
-// 		// scene.add(sphere);
-// 		// blendMesh.skeleton.bones[0].add(insert some mesh/weapon here);
-//
-// 	});
-// });
+};

@@ -5,6 +5,7 @@ require('seedrandom');
 var THREE = require('three'),
 	SAT = require('sat'),
 	_ = require('underscore'),
+	assets = require('./src/assets'),// TODO: don't want this here
 	Minivents = require('minivents');
 
 var rads = function () {
@@ -35,8 +36,9 @@ var getFreeSpace = function () {
 	};
 }();
 
-+ function () {
-	var SIZE = 30;
+var assets = require('./src/assets');
+assets.load(function () {
+	var SIZE = 50;
 	var Entity = require('./src/entity'),
 		player = new Entity.Player(),
 		scene = require('./src/scene');
@@ -50,9 +52,15 @@ var getFreeSpace = function () {
 	};
 
 	var initSomeRocks = function () {
-		_.times(50, function () {
+		var n, c;
+		n = c = 0.01;
+		_.times(8, function () {
 			var pos = getFreeSpace(SIZE),
 				rock = new Entity.Rock(pos);
+			rock.avatar = assets.get('rock');
+			rock.avatar.rotation.y = Math.random() * 360;
+			rock.avatar.position.z = n;
+			n += c;
 			scene.addEntity(rock);
 		});
 	};
@@ -61,4 +69,4 @@ var getFreeSpace = function () {
 	initSomeRocks();
 	initSomeEnemies();
 
-}();
+});

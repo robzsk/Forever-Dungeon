@@ -4,7 +4,8 @@ var SCALE = 2,
 
 var configs = [
 	{ name: 'player', meshFile: 'player', textureFile: 'player' },
-	{ name: 'sword', meshFile: 'sword' }
+	{ name: 'sword', meshFile: 'sword' },
+	{ name: 'rock', meshFile: 'rock', textureFile: 'rock' },
 ];
 
 var onComplete = function (callback) {
@@ -22,7 +23,7 @@ var onComplete = function (callback) {
 	if (complete) {
 		// Everything is loaded, create the meshes
 		_.each(configs, function (c) {
-			var material = new THREE.MeshBasicMaterial({ map: c.texture || null, color: c.texture? null: 0xff00ff });
+			var material = new THREE.MeshBasicMaterial({ map: c.texture || null, color: c.texture? null: 0xff00ff, transparent: true });
 			if (c.geometry.animations) {
 				c.mesh = new THREE.BlendCharacter(c.geometry, material);
 			} else {
@@ -44,7 +45,7 @@ module.exports = {
 			}
 		});
 		if (ret) {
-			return ret;
+			return ret.clone();
 		}
 		throw new Error('Mesh was not defined: ' + name);
 	},
