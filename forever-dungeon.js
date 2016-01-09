@@ -15,6 +15,8 @@ var rads = function () {
 	};
 }();
 
+// NOTE: three.js will make calls to Math.random which will throw out our seed
+// need to find a way around this
 var r = 0.6155678408686072;// Math.random();
 Math.seedrandom(r);
 console.log('Using seed ' + r);
@@ -43,30 +45,20 @@ assets.load(function () {
 		player = new Entity.Player(),
 		scene = require('./src/scene');
 
-	var initSomeEnemies = function () {
+	var initSomeSlime = function () {
 		_.times(8, function () {
-			var pos = getFreeSpace(SIZE),
-				enemy = new Entity.Enemy(pos);
-			scene.addEntity(enemy);
+			scene.addEntity(new Entity.Slime(getFreeSpace(SIZE)));
 		});
 	};
 
 	var initSomeRocks = function () {
-		var n, c;
-		n = c = 0.01;
 		_.times(8, function () {
-			var pos = getFreeSpace(SIZE),
-				rock = new Entity.Rock(pos);
-			rock.avatar = assets.get('rock');
-			rock.avatar.rotation.y = Math.random() * 360;
-			rock.avatar.position.z = n;
-			n += c;
-			scene.addEntity(rock);
+			scene.addEntity(new Entity.Rock(getFreeSpace(SIZE)));
 		});
 	};
 
 	scene.addPlayer(player);
 	initSomeRocks();
-	initSomeEnemies();
+	initSomeSlime();
 
 });

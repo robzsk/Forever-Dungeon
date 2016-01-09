@@ -22,8 +22,10 @@ var Traveller = function (parent) {
 	this._destination = new THREE.Vector2();
 	this._force = new THREE.Vector2();
 	this._velocity = new THREE.Vector2();
-	this._travelling = false;
+	// this._travelling = false;
 	this._collisions = new Sensor(this._parent);
+
+	this._stopped = true;
 
 	this._collisions.on('collision.detected', handleCollision);
 
@@ -33,9 +35,8 @@ var Traveller = function (parent) {
 Traveller.prototype = {
 	atDestination: function () {
 		var arrived = this._parent.position.x === this._destination.x && this._parent.position.y === this._destination.y;
-		if (arrived && this._travelling) {
-			this._travelling = false;
-			this.emit('traveller-arrived');
+		if (arrived) {
+			this.stop();
 		}
 		return arrived;
 	},
@@ -62,20 +63,22 @@ Traveller.prototype = {
 		this._velocity.set(dest.x - this._parent.position.x, dest.y - this._parent.position.y)
 			.normalize()
 			.multiplyScalar(this._parent.travelSpeed || 0.1);
-		this._travelling = true;
+		if (this._stopped) {
+			this.emit('traveller.started');
+		}
+		this._stopped = false;
 	},
 
 	getAngleToDestination: function () {
 		return Math.atan2(this._velocity.y, this._velocity.x);
 	},
 
-	isTravelling: function () {
-		return this._travelling;
-	},
-
 	stop: function () {
 		this._destination.copy(this._parent.position);
-		this._travelling = false;
+		if (!this._stopped) {
+			this._stopped = true;
+			this.emit('traveller.stopped');
+		}
 	},
 
 	init: function () {
@@ -84,13 +87,18 @@ Traveller.prototype = {
 
 	update: function (world) {
 		if (!this.atDestination()) {
-			// when collision correction occure we need to adjust velocity
+			// when collision correction occur we need to adjust velocity
 			// could possibly find a more efficient way to do this
 			this.setDestination(this._destination);
 			this.setVelocity();
-
 			this._collisions.check(world.entities);
 		}
+
+		// update the avatar position
+		var p = this._parent.position,
+			a = this._parent.avatar.position;
+		a.set(p.x, p.y, a.z);
+		this._parent.avatar.rotation.y = this._parent.behaviours.traveller.getAngleToDestination() - rads(270);
 	}
 };
 

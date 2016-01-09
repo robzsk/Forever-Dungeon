@@ -20,11 +20,26 @@ THREE.BlendCharacter = function (geometry, material) {
 		this.mixer.update(dt);
 	};
 
-	this.play = function (animName, weight) {
+	this.play = function (animName, conf) {
+		var action = new THREE.AnimationAction(this.animations[animName]);
+		var scope = this;
 		this.mixer.removeAllActions();
 
-		var action = new THREE.AnimationAction(this.animations[animName]);
-		// action.loop = THREE.LoopOnce;
+		// TODO: seems like the api does not want us to do it this way
+		// look for a better way
+		if (this.mixer._listeners) {
+			this.mixer._listeners['finished'] = [];
+		}
+
+		conf = conf || {};
+		action.loop = conf.loopOnce ? THREE.LoopOnce : THREE.Loop;
+		if (conf.onComplete) {
+			this.mixer.addEventListener('finished', function anon () {
+				scope.mixer.removeEventListener('finished', anon);
+				conf.onComplete();
+			});
+		}
+		//
 		this.mixer.play(action);
 
 	};

@@ -5,6 +5,7 @@ var SCALE = 2,
 var configs = [
 	{ name: 'player', meshFile: 'player', textureFile: 'player' },
 	{ name: 'sword', meshFile: 'sword' },
+	{ name: 'slime', meshFile: 'slime', textureFile: 'slime' },
 	{ name: 'rock', meshFile: 'rock', textureFile: 'rock' },
 ];
 
