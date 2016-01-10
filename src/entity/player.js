@@ -14,14 +14,14 @@ var Player = function (pos) {
 	});
 
 	this.avatar = assets.get('player');
-	this.avatar.scale.set(2, 2, 2);
+	// this.avatar.scale.set(2, 2, 2);
 
 	this.behaviours.traveller.on('traveller.stopped', function () {
-		scope.avatar.play('Idle', 1);
+		// scope.avatar.play('Idle', 1);
 	});
 
 	this.behaviours.traveller.on('traveller.started', function () {
-		scope.avatar.play('Run', 1);
+		// scope.avatar.play('Run', 1);
 	});
 
 	this.behaviours.destructible.on('destructible.dead', function () {
@@ -29,18 +29,18 @@ var Player = function (pos) {
 	});
 
 	this.behaviours.attacker.on('attacker.started', function () {
-		scope.avatar.play('Attack', {
-			loopOnce: true,
-			onComplete: function () {
-				scope.behaviours.attacker.applyAttack();
-				// scope.behaviours.attacker.clearTarget();// must click again to attack
-				scope.avatar.play('Idle');
-			}
-		});
+		// scope.avatar.play('Attack', {
+		// 	loopOnce: true,
+		// 	onComplete: function () {
+		// 		scope.behaviours.attacker.applyAttack();
+		// 		// scope.behaviours.attacker.clearTarget();// must click again to attack
+		// 		scope.avatar.play('Idle');
+		// 	}
+		// });
 	});
 
 	this.render = function () {
-		this.avatar.update(0.03);
+		// this.avatar.update(0.03);
 	};
 
 };
