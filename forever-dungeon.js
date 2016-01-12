@@ -15,6 +15,13 @@ var rads = function () {
 	};
 }();
 
+var degs = function () {
+	var D = 180 / Math.PI;
+	return function (r) {
+		return r * D;
+	};
+}();
+
 // NOTE: three.js will make calls to Math.random which will throw out our seed
 // need to find a way around this
 var r = 0.6155678408686072;// Math.random();

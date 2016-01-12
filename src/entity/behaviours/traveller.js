@@ -16,19 +16,42 @@ var handleCollision = function (a, b, response) {
 	}
 };
 
+var clamp = function (r) {
+	var p2 = Math.PI * 2;
+	return function (r) {
+		if (r > Math.PI) {
+			r -= p2;
+		}
+		if (r < -Math.PI) {
+			r += p2;
+		}
+		return r;
+	};
+}();
+
+var shortestAngle = function (from, to, n) {
+	var a = from - to;
+	var ret = to;
+	a = clamp(a);
+	if (a > 0) {
+		ret += Math.min(n, Math.abs(a));
+	} else {
+		ret -= Math.min(n, Math.abs(a));
+	}
+	return clamp(ret);
+};
+
 // TODO: set these to _variable to make private
 var Traveller = function (parent) {
 	this._parent = parent;
 	this._destination = new THREE.Vector2();
 	this._force = new THREE.Vector2();
 	this._velocity = new THREE.Vector2();
-	// this._travelling = false;
+	this._currentAngle = 0;
+	this._targetAngle = 0;
 	this._collisions = new Sensor(this._parent);
-
 	this._stopped = true;
-
 	this._collisions.on('collision.detected', handleCollision);
-
 	Minivents(this);
 };
 
@@ -42,12 +65,14 @@ Traveller.prototype = {
 	},
 
 	setVelocity: function () {
+		var at = true;
 		if (this._parent.position.x !== this._destination.x) {
 			if (this._velocity.x < 0) {
 				this._parent.position.x += Math.max(this._velocity.x, this._destination.x - this._parent.position.x);
 			} else {
 				this._parent.position.x += Math.min(this._velocity.x, this._destination.x - this._parent.position.x);
 			}
+			at = false;
 		}
 		if (this._parent.position.y !== this._destination.y) {
 			if (this._velocity.y < 0) {
@@ -55,6 +80,11 @@ Traveller.prototype = {
 			} else {
 				this._parent.position.y += Math.min(this._velocity.y, this._destination.y - this._parent.position.y);
 			}
+			at = false;
+		}
+
+		if (!at) {
+			this._currentAngle = shortestAngle(Math.atan2(this._velocity.y, this._velocity.x), this._currentAngle, 0.4);
 		}
 	},
 
@@ -67,10 +97,6 @@ Traveller.prototype = {
 			this.emit('traveller.started');
 		}
 		this._stopped = false;
-	},
-
-	getAngleToDestination: function () {
-		return Math.atan2(this._velocity.y, this._velocity.x);
 	},
 
 	stop: function () {
@@ -98,7 +124,7 @@ Traveller.prototype = {
 		var p = this._parent.position,
 			a = this._parent.avatar.position;
 		a.set(p.x, p.y, a.z);
-		this._parent.avatar.rotation.y = this._parent.behaviours.traveller.getAngleToDestination() - rads(270);
+		this._parent.avatar.rotation.y = this._currentAngle - rads(270);
 	}
 };
 

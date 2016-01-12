@@ -21,7 +21,6 @@ var Slime = function (pos) {
 
 	this.behaviours.attacker.on('attacker.started', function () {
 		setTimeout(function () {
-			console.log('slime apply dmg');
 			scope.behaviours.attacker.applyAttack();
 		}, 500);
 	});

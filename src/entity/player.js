@@ -25,7 +25,7 @@ var Player = function (pos) {
 	});
 
 	this.behaviours.destructible.on('destructible.dead', function () {
-		console.log('you are dead');
+		// console.log('you are dead');
 	});
 
 	this.behaviours.attacker.on('attacker.started', function () {
