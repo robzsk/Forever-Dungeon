@@ -29,14 +29,14 @@ var Player = function (pos) {
 	});
 
 	this.behaviours.attacker.on('attacker.started', function () {
-		// scope.avatar.play('Attack', {
-		// 	loopOnce: true,
-		// 	onComplete: function () {
-		// 		scope.behaviours.attacker.applyAttack();
-		// 		// scope.behaviours.attacker.clearTarget();// must click again to attack
-		// 		scope.avatar.play('Idle');
-		// 	}
-		// });
+		scope.avatar.play('Attack', {
+			loopOnce: true,
+			onComplete: function () {
+				scope.behaviours.attacker.applyAttack();
+				// scope.behaviours.attacker.clearTarget();// must click again to attack
+				scope.avatar.play('Idle');
+			}
+		});
 	});
 
 	this.render = function () {
