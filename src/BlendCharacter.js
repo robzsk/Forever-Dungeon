@@ -20,16 +20,20 @@ THREE.BlendCharacter = function (geometry, material) {
 		this.mixer.update(dt);
 	};
 
-	this.play = function (animName, conf) {
-		var action = new THREE.AnimationAction(this.animations[animName]);
-		var scope = this;
-		this.mixer.removeAllActions();
-
+	this.removeAllListeners = function () {
 		// TODO: seems like the api does not want us to do it this way
 		// look for a better way
 		if (this.mixer._listeners) {
 			this.mixer._listeners['finished'] = [];
 		}
+	};
+
+	this.play = function (animName, conf) {
+		var action = new THREE.AnimationAction(this.animations[animName]);
+		var scope = this;
+		this.mixer.removeAllActions();
+
+		this.removeAllListeners();
 
 		conf = conf || {};
 		action.loop = conf.loopOnce ? THREE.LoopOnce : THREE.Loop;
@@ -42,6 +46,26 @@ THREE.BlendCharacter = function (geometry, material) {
 		//
 		this.mixer.play(action);
 
+	};
+
+	this.crossfadeTo = function (animName, duration, conf) {
+		var scope = this;
+		var toAction = null;
+		_.each(this.mixer.actions, function (action) {
+			scope.mixer.fadeOut(action, 0.5);
+			if (action.name === animName) {
+				toAction = action;
+			}
+		});
+
+		// var toAction = this.mixer.findActionByName(animName);
+
+		if (toAction === null) {
+			toAction = new THREE.AnimationAction(this.animations[animName]);
+			toAction.name = animName;
+		}
+		this.mixer.fadeIn(toAction, 1);
+		this.mixer.play(toAction);
 	};
 
 	this.crossfade = function ( fromAnimName, toAnimName, duration ) {

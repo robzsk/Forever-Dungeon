@@ -65,14 +65,12 @@ Traveller.prototype = {
 	},
 
 	setVelocity: function () {
-		var at = true;
 		if (this._parent.position.x !== this._destination.x) {
 			if (this._velocity.x < 0) {
 				this._parent.position.x += Math.max(this._velocity.x, this._destination.x - this._parent.position.x);
 			} else {
 				this._parent.position.x += Math.min(this._velocity.x, this._destination.x - this._parent.position.x);
 			}
-			at = false;
 		}
 		if (this._parent.position.y !== this._destination.y) {
 			if (this._velocity.y < 0) {
@@ -80,12 +78,11 @@ Traveller.prototype = {
 			} else {
 				this._parent.position.y += Math.min(this._velocity.y, this._destination.y - this._parent.position.y);
 			}
-			at = false;
 		}
+	},
 
-		if (!at) {
-			this._currentAngle = shortestAngle(Math.atan2(this._velocity.y, this._velocity.x), this._currentAngle, 0.4);
-		}
+	updateAngle: function () {
+		this._currentAngle = shortestAngle(Math.atan2(this._velocity.y, this._velocity.x), this._currentAngle, 0.4);
 	},
 
 	setDestination: function (dest) {
@@ -117,6 +114,7 @@ Traveller.prototype = {
 			// could possibly find a more efficient way to do this
 			this.setDestination(this._destination);
 			this.setVelocity();
+			this.updateAngle();
 			this._collisions.check(world.entities);
 		}
 

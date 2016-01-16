@@ -120,7 +120,7 @@ module.exports = {
 		}
 	}
 };
-
+/*
 // TODO: remove this
 var runTest = function () {
 	// this changes the random seed somehow
@@ -142,11 +142,13 @@ var runTest = function () {
 		testPlayerMesh.rotation.y = player.behaviours.traveller.getAngleToDestination() - (270 * Math.PI / 180);
 		testPlayerMesh.position.set(player.position.x, player.position.y, 0);
 		if (!player.behaviours.traveller.isTravelling()) {
-			testPlayerMesh.play('Idle', 0.1);
+			// testPlayerMesh.play('Idle', 0.1);
+			testPlayerMesh.crossfadeTo('Idle', 1000);
 			running = false;
 		} else if (!running && player.behaviours.traveller.isTravelling()) {
 			running = true;
-			testPlayerMesh.play('Run', 1);
+			// testPlayerMesh.play('Run', 1);
+			testPlayerMesh.crossfadeTo('Run', 1000);
 		}
 
 	};
@@ -158,3 +160,4 @@ var runTest = function () {
 		}
 	});
 };
+*/

@@ -7,6 +7,7 @@ var Slime = function (pos) {
 	Entity.call(this, {
 		position: pos,
 		radius: 1,
+		health: 1,
 		attackRadius: 2,// collide with this and the entity will attack you if you're the target
 		hostileRadius: 12,// collide with this and the entity will become hotile toward you
 		debugColor: 0xff0000,

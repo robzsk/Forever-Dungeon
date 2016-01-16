@@ -14,14 +14,13 @@ var Player = function (pos) {
 	});
 
 	this.avatar = assets.get('player');
-	// this.avatar.scale.set(2, 2, 2);
 
 	this.behaviours.traveller.on('traveller.stopped', function () {
-		scope.avatar.play('Idle', 1);
+		scope.avatar.crossfadeTo('Idle', 1);
 	});
 
 	this.behaviours.traveller.on('traveller.started', function () {
-		scope.avatar.play('Run', 1);
+		scope.avatar.play('Run');
 	});
 
 	this.behaviours.destructible.on('destructible.dead', function () {

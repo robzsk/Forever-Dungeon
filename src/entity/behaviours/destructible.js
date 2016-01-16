@@ -15,7 +15,7 @@ var Destructible = function (parent) {
 	this._home = new THREE.Vector2();
 	this._target = undefined;
 	this._attacking = false;
-	this._hp = 2;// TODO: use configuration
+	this._hp = parent.health;// TODO: use configuration
 	this._attackSensor = new Sensor(parent, 'attackRadius');
 	this._attackSensor.on('collision.detected', handleSensorCollision);
 	Minivents(this);
