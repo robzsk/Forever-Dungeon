@@ -54,14 +54,14 @@ var updateInput = function () {
 			intersects = raycaster.intersectObjects(clickables, false);
 			if (intersects.length > 0) {
 				if (intersects[0].object.uuid === clickPlane.uuid && !targetEntity) {
-					world.player.behaviours.traveller.setDestination(intersects[0].point);
-					world.player.behaviours.attacker.clearTarget();
+					world.player.traveller.setDestination(intersects[0].point);
+					world.player.attacker.clearTarget();
 					targetGround = true;
 				} else if (!targetGround && !targetEntity) {
 					clickedEntity = getClickedEntity(intersects[0].object);
 					if (clickedEntity) {
 						targetEntity = true;
-						world.player.behaviours.attacker.setTarget(clickedEntity);
+						world.player.attacker.setTarget(clickedEntity);
 					}
 				}
 

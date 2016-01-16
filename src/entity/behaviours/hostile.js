@@ -1,11 +1,10 @@
 var Sensor = require('./util/sensor');
 
 var handleSensorCollision = function (a, b) {
-	var abh = a.behaviours;
-	if (a.hasBehaviour('attacker') && !abh.hostile._agro) {
-		abh.traveller.setDestination(b.position);
-		abh.attacker.setTarget(b);
-		abh.hostile._agro = true;
+	if (a.hasBehaviour('attacker') && !a.hostile._agro) {
+		a.traveller.setDestination(b.position);
+		a.attacker.setTarget(b);
+		a.hostile._agro = true;
 	}
 };
 
@@ -26,7 +25,7 @@ Hostile.prototype = {
 	update: function (world) {
 		if (!this._hostileSensor.check([world.player])) {
 			if (this._parent.hasBehaviour('traveller')) {
-				this._parent.behaviours.traveller.setDestination(this._home);
+				this._parent.traveller.setDestination(this._home);
 			}
 			this._agro = false;
 		}

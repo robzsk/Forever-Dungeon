@@ -16,13 +16,13 @@ var Slime = function (pos) {
 
 	this.avatar = assets.get('slime');
 
-	this.behaviours.destructible.on('destructible.dead', function () {
+	this.destructible.on('destructible.dead', function () {
 		scene.removeEntity(scope);
 	});
 
-	this.behaviours.attacker.on('attacker.started', function () {
+	this.attacker.on('attacker.started', function () {
 		setTimeout(function () {
-			scope.behaviours.attacker.applyAttack();
+			scope.attacker.applyAttack();
 		}, 500);
 	});
 

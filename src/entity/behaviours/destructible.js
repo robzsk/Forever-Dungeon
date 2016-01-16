@@ -30,7 +30,7 @@ Destructible.prototype = {
 		if (this._target) {
 			if (!this._attackSensor.check([this._target])) {
 				if (this._parent.hasBehaviour('traveller')) {
-					this._parent.behaviours.traveller.setDestination(this._target.position);
+					this._parent.traveller.setDestination(this._target.position);
 				}
 			}
 		}

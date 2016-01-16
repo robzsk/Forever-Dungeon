@@ -2,7 +2,7 @@ var behaviours = require('./behaviours');
 
 var Entity = function (properties) {
 	var scope = this;
-	this.behaviours = {};
+	this._behaviours = [];
 
 	if (!properties.position) {
 		properties.position = new THREE.Vector2();
@@ -17,7 +17,8 @@ var Entity = function (properties) {
 				}
 				// construct the behaviour
 				if (_.isString(b)) {
-					scope.behaviours[b] = new behaviours[b](scope);
+					scope[b] = new behaviours[b](scope);
+					scope._behaviours.push(b);
 				}
 			});
 		} else {
@@ -30,16 +31,17 @@ var Entity = function (properties) {
 	});
 
 	// call init on all our defined behaviours
-	_.each(this.behaviours, function (b) {
-		b.init && b.init();
+	_.each(this._behaviours, function (b) {
+		scope[b].init && scope[b].init();
 	});
 
 };
 
 Entity.prototype = {
 	update: function (world) {
-		_.each(this.behaviours, function (b) {
-			b.update && b.update(world);
+		var scope = this;
+		_.each(this._behaviours, function (b) {
+			scope[b].update && scope[b].update(world);
 		});
 	},
 
@@ -48,7 +50,7 @@ Entity.prototype = {
 	},
 
 	hasBehaviour: function (b) {
-		return this.behaviours.hasOwnProperty(b);
+		return this.hasOwnProperty(b);
 	}
 };
 

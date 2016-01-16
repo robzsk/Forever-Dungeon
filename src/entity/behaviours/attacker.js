@@ -1,12 +1,12 @@
 var Sensor = require('./util/sensor');
 
 var handleSensorCollision = function (a, b) {
-	if (b === a.behaviours.attacker._target) {
+	if (b === a.attacker._target) {
 		// must stop first else idle will be the last thing we've triggered
-		a.behaviours.traveller.stop();
-		if (!a.behaviours.attacker._attacking) {
-			a.behaviours.attacker.emit('attacker.started');
-			a.behaviours.attacker._attacking = true;
+		a.traveller.stop();
+		if (!a.attacker._attacking) {
+			a.attacker.emit('attacker.started');
+			a.attacker._attacking = true;
 		}
 	}
 };
@@ -30,14 +30,14 @@ Attacker.prototype = {
 		if (this._target) {
 			if (!this._attackSensor.check([this._target])) {
 				if (this._parent.hasBehaviour('traveller')) {
-					this._parent.behaviours.traveller.setDestination(this._target.position);
+					this._parent.traveller.setDestination(this._target.position);
 				}
 			}
 		}
 	},
 
 	applyAttack: function () {
-		var d = this._target.hasBehaviour('destructible') && this._target.behaviours.destructible;
+		var d = this._target.hasBehaviour('destructible') && this._target.destructible;
 		this._attacking = false;
 		if (d) {
 			d.takeDamage(1);

@@ -15,23 +15,23 @@ var Player = function (pos) {
 
 	this.avatar = assets.get('player');
 
-	this.behaviours.traveller.on('traveller.stopped', function () {
+	this.traveller.on('traveller.stopped', function () {
 		scope.avatar.crossfadeTo('Idle', 1);
 	});
 
-	this.behaviours.traveller.on('traveller.started', function () {
+	this.traveller.on('traveller.started', function () {
 		scope.avatar.play('Run');
 	});
 
-	this.behaviours.destructible.on('destructible.dead', function () {
+	this.destructible.on('destructible.dead', function () {
 		// console.log('you are dead');
 	});
 
-	this.behaviours.attacker.on('attacker.started', function () {
+	this.attacker.on('attacker.started', function () {
 		scope.avatar.play('Attack', {
 			loopOnce: true,
 			onComplete: function () {
-				scope.behaviours.attacker.applyAttack();
+				scope.attacker.applyAttack();
 				// scope.behaviours.attacker.clearTarget();// must click again to attack
 				scope.avatar.play('Idle');
 			}
