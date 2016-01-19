@@ -64,7 +64,6 @@ var updateInput = function () {
 						world.player.attacker.setTarget(clickedEntity);
 					}
 				}
-
 			}
 		}
 	};
@@ -105,12 +104,14 @@ module.exports = {
 		scene.add(entity.avatar);
 		world.entities.push(world.player);
 	},
+
 	addEntity: function (entity) {
 		entity.avatar.position.set(entity.position.x, entity.position.y, 0);
 		scene.add(entity.avatar);
 		world.entities.push(entity);
 		clickables.push(entity.avatar);
 	},
+
 	removeEntity: function (entity) {
 		var index = world.entities.indexOf(entity);
 		if (index !== -1) {
@@ -120,44 +121,3 @@ module.exports = {
 		}
 	}
 };
-/*
-// TODO: remove this
-var runTest = function () {
-	// this changes the random seed somehow
-	var testPlayerMesh = assets.get('player');
-	// var sword = assets.get('sword');
-	var player = world.player;
-	var running = false;
-	var scale = 2;
-	testPlayerMesh.scale.set(scale, scale, scale);
-
-	scene.add(testPlayerMesh);
-
-	// assets.findBoneByName(testPlayerMesh.skeleton, 'hand.r').add(sword);
-
-	var f = function () {
-		testPlayerMesh.update(0.03);
-		requestAnimationFrame(f);
-
-		testPlayerMesh.rotation.y = player.behaviours.traveller.getAngleToDestination() - (270 * Math.PI / 180);
-		testPlayerMesh.position.set(player.position.x, player.position.y, 0);
-		if (!player.behaviours.traveller.isTravelling()) {
-			// testPlayerMesh.play('Idle', 0.1);
-			testPlayerMesh.crossfadeTo('Idle', 1000);
-			running = false;
-		} else if (!running && player.behaviours.traveller.isTravelling()) {
-			running = true;
-			// testPlayerMesh.play('Run', 1);
-			testPlayerMesh.crossfadeTo('Run', 1000);
-		}
-
-	};
-	requestAnimationFrame(f);
-
-	$(document).on('keypress', function (e) {
-		if (e.charCode === 97) {
-			testPlayerMesh.play('Attack', 1);
-		}
-	});
-};
-*/
