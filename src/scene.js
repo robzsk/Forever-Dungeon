@@ -1,16 +1,16 @@
-var $ = require('jquery'),
-	loop = require('./engine/loop');
+var $ = require('jquery');
+var loop = require('./engine/loop');
 
-var windowWidth = window.innerWidth,
-	windowHeight = window.innerHeight,
-	ZOOM = 0.075;
+var W = window.innerWidth;
+var H = window.innerHeight;
+var Z = 0.075;
 
-var scene = new THREE.Scene(),
-	camera = new THREE.OrthographicCamera(windowWidth * ZOOM / -2, windowWidth * ZOOM / 2, windowHeight * ZOOM / 2, windowHeight * ZOOM / -2, -100, 100),
-	renderer = new THREE.WebGLRenderer({ antialias: true });
+var scene = new THREE.Scene();
+var camera = new THREE.OrthographicCamera(W * Z / -2, W * Z / 2, H * Z / 2, H * Z / -2, -100, 100);
+var renderer = new THREE.WebGLRenderer({ antialias: true });
 
 renderer.setClearColor(0xffffff, 1);
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(W, H);
 document.body.appendChild(renderer.domElement);
 camera.rotation.order = 'ZXY';
 camera.rotation.z = 45 * Math.PI / 180;
@@ -27,25 +27,35 @@ var world = {
 
 var clickables = [];
 
+var toBeRemoved = [];
+
 var updateInput = function () {
-	var leftButton = false,
-		mousePosition = new THREE.Vector2(),
-		raycaster = new THREE.Raycaster(),
-		mouse = new THREE.Vector2(),
-		intersects, clickedEntity, targetEntity = false, targetGround = false;
-	clickPlane = new THREE.Mesh(new THREE.PlaneGeometry(250, 250),
-		new THREE.MeshBasicMaterial());
+	var leftButton = false;
+	var mousePosition = new THREE.Vector2();
+	var raycaster = new THREE.Raycaster();
+	var mouse = new THREE.Vector2();
+	var intersects;
+	var clickedEntity;
+	var targetEntity = false;
+	var targetGround = false;
+
+	clickPlane = new THREE.Mesh(new THREE.PlaneGeometry(250, 250), new THREE.MeshBasicMaterial());
+
 	clickables.push(clickPlane);
+
 	$(document).on('mousemove', function (e) {
 		mousePosition.set(e.clientX, e.clientY);
 	});
+
 	$(document).on('mouseup', function (e) {
 		targetEntity = targetGround = false;
 		leftButton = e.which === 1 ? false: leftButton;
 	});
+
 	$(document).on('mousedown', function (e) {
 		leftButton = e.which === 1;
 	});
+
 	return function () {
 		if (leftButton) {
 			mouse.x = (mousePosition.x / renderer.domElement.width) * 2 - 1;
@@ -70,13 +80,9 @@ var updateInput = function () {
 }();
 
 var getClickedEntity = function (clicked) {
-	var ret;
-	_.each(world.entities, function (e) {// TODO: use every or find here instead of each to return and stop when found
-		if (e.avatar.uuid === clicked.uuid) {
-			ret = e;
-		}
+	return _.find(world.entities, function (e) {
+		return e.avatar.uuid === clicked.uuid;
 	});
-	return ret;
 };
 
 loop.on('loop.update', function () {
@@ -84,14 +90,16 @@ loop.on('loop.update', function () {
 	_.each(world.entities, function (e) {
 		e.update && e.update(world);
 	});
+
+	// entities get killed/removed during the update loop, but we actually do the removal here
+	world.entities = _.difference(world.entities, toBeRemoved);
+	clickables = _.difference(clickables, toBeRemoved);
+	toBeRemoved = [];
 });
 
 loop.on('loop.render', function () {
 	_.each(world.entities, function (e) {
-		// entities may be removed during this loop
-		// need to check they still exist.
-		// should we do this a safer way?
-		e && e.render && e.render();
+		e.render && e.render();
 	});
 	camera.position.set(world.player.position.x, world.player.position.y, 0);// following the player
 	clickPlane.position.set(world.player.position.x, world.player.position.y, 0);
@@ -113,11 +121,7 @@ module.exports = {
 	},
 
 	removeEntity: function (entity) {
-		var index = world.entities.indexOf(entity);
-		if (index !== -1) {
-			world.entities.splice(index, 1);
-			clickables.splice(clickables.indexOf(entity.avatar), 1);
-			scene.remove(entity.avatar);
-		}
+		toBeRemoved.push(entity);
+		scene.remove(entity.avatar);
 	}
 };

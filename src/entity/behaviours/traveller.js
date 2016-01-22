@@ -3,8 +3,9 @@ var Sensor = require('./util/sensor');
 // where a and b are entities
 // response is a SAT.js object
 var handleCollision = function (a, b, response) {
-	var tA = a.hasBehaviour('traveller'),
-		tB = b.hasBehaviour('traveller');
+	var tA = a.hasBehaviour('traveller');
+	var tB = b.hasBehaviour('traveller');
+
 	if (tA && tB) {
 		response.overlapV.scale(0.5);
 		a.position.sub(response.overlapV);
@@ -18,6 +19,7 @@ var handleCollision = function (a, b, response) {
 
 var clamp = function (r) {
 	var p2 = Math.PI * 2;
+
 	return function (r) {
 		if (r > Math.PI) {
 			r -= p2;
@@ -32,16 +34,22 @@ var clamp = function (r) {
 var shortestAngle = function (from, to, n) {
 	var a = from - to;
 	var ret = to;
+
 	a = clamp(a);
+
 	if (a > 0) {
 		ret += Math.min(n, Math.abs(a));
 	} else {
 		ret -= Math.min(n, Math.abs(a));
 	}
+
 	return clamp(ret);
 };
 
-// TODO: set these to _variable to make private
+var getAngle = function (vec2) {
+	return Math.atan2(vec2.y, vec2.x);
+};
+
 var Traveller = function (parent) {
 	this._parent = parent;
 	this._destination = new THREE.Vector2();
@@ -57,47 +65,61 @@ var Traveller = function (parent) {
 
 Traveller.prototype = {
 	atDestination: function () {
-		var arrived = this._parent.position.x === this._destination.x && this._parent.position.y === this._destination.y;
+		var p = this._parent.position;
+		var d = this._destination;
+		var arrived = p.x === d.x && p.y === d.y;
+
 		if (arrived) {
 			this.stop();
 		}
+
 		return arrived;
 	},
 
 	setVelocity: function () {
-		if (this._parent.position.x !== this._destination.x) {
-			if (this._velocity.x < 0) {
-				this._parent.position.x += Math.max(this._velocity.x, this._destination.x - this._parent.position.x);
+		var p = this._parent.position;
+		var v = this._velocity;
+		var d = this._destination;
+
+		if (p.x !== d.x) {
+			if (v.x < 0) {
+				p.x += Math.max(v.x, d.x - p.x);
 			} else {
-				this._parent.position.x += Math.min(this._velocity.x, this._destination.x - this._parent.position.x);
+				p.x += Math.min(v.x, d.x - p.x);
 			}
 		}
-		if (this._parent.position.y !== this._destination.y) {
-			if (this._velocity.y < 0) {
-				this._parent.position.y += Math.max(this._velocity.y, this._destination.y - this._parent.position.y);
+		if (p.y !== d.y) {
+			if (v.y < 0) {
+				p.y += Math.max(v.y, d.y - p.y);
 			} else {
-				this._parent.position.y += Math.min(this._velocity.y, this._destination.y - this._parent.position.y);
+				p.y += Math.min(v.y, d.y - p.y);
 			}
 		}
 	},
 
 	updateAngle: function () {
-		this._currentAngle = shortestAngle(Math.atan2(this._velocity.y, this._velocity.x), this._currentAngle, 0.4);
+		this._currentAngle = shortestAngle(getAngle(this._velocity), this._currentAngle, 0.4);
 	},
 
 	setDestination: function (dest) {
+		var p = this._parent.position;
+
 		this._destination.copy(dest);
-		this._velocity.set(dest.x - this._parent.position.x, dest.y - this._parent.position.y)
+
+		this._velocity.set(dest.x - p.x, dest.y - p.y)
 			.normalize()
 			.multiplyScalar(this._parent.travelSpeed || 0.1);
+
 		if (this._stopped) {
 			this.emit('traveller.started');
 		}
+
 		this._stopped = false;
 	},
 
 	stop: function () {
 		this._destination.copy(this._parent.position);
+
 		if (!this._stopped) {
 			this._stopped = true;
 			this.emit('traveller.stopped');
@@ -119,9 +141,11 @@ Traveller.prototype = {
 		}
 
 		// update the avatar position
-		var p = this._parent.position,
-			a = this._parent.avatar.position;
+		var p = this._parent.position;
+		var a = this._parent.avatar.position;
+
 		a.set(p.x, p.y, a.z);
+
 		this._parent.avatar.rotation.y = this._currentAngle - rads(270);
 	}
 };
