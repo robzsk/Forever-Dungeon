@@ -1,3 +1,10 @@
+var Input = require('../engine/input');
+var input = new Input({
+	// gamepad: { index: 0 },
+	// buttons: { left: 14, right: 15, attack: 0 },
+	keys: { left: 37, right: 39, up: 38, down: 40, attack: 90 }
+});
+
 var Entity = require('./base'),
 	assets = require('../assets');
 
@@ -15,28 +22,56 @@ var Player = function (pos) {
 
 	this.avatar = assets.get('player');
 
-	this.traveller.on('traveller.stopped', function () {
-		scope.avatar.crossfadeTo('Idle', 1);
-	});
-
-	this.traveller.on('traveller.started', function () {
+	this.traveller.on('traveller.run', function () {
 		scope.avatar.play('Run');
 	});
 
-	this.destructible.on('destructible.dead', function () {
-		// console.log('you are dead');
+	this.traveller.on('traveller.idle', function () {
+		scope.avatar.crossfadeTo('Idle');
 	});
 
-	this.attacker.on('attacker.started', function () {
-		scope.avatar.play('Attack', {
-			loopOnce: true,
-			onComplete: function () {
-				scope.attacker.applyAttack();
-				// scope.behaviours.attacker.clearTarget();// must click again to attack
-				scope.avatar.play('Idle');
-			}
-		});
+	// input
+	var getD = function (a) {
+		return {
+			x: Math.sin(rads(a)) * 0.4, y: Math.cos(rads(a)) * 0.4
+		};
+	};
+	var D = {
+		N: getD(315),
+		NE: getD(0),
+		E: getD(45),
+		SE: getD(90),
+		S: getD(135),
+		SW: getD(180),
+		W: getD(225),
+		NW: getD(270),
+	};
+
+	input.on('input.move', function (m) {
+		var direction = 0;
+		var t = scope.traveller;
+
+		// reset velocity
+		if (!m.up && !m.down && !m.left && !m.right) {
+			t.setVelocity();
+		}
+
+		if (m.attack) {
+			scope.avatar.crossfadeTo('Attack');
+		} else {
+			var d = '';
+			if (m.up) d += 'N';
+			if (m.down) d += 'S';
+			if (m.left) d += 'W';
+			if (m.right) d += 'E';
+			t.setVelocity(D[d]);
+		}
 	});
+
+	this.updateInput = function (ticks) {
+		input.update(ticks);
+	};
+	// end input
 
 	this.render = function () {
 		this.avatar.update(0.1);

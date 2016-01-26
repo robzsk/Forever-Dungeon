@@ -28,7 +28,13 @@ THREE.BlendCharacter = function (geometry, material) {
 		}
 	};
 
+	this._currentAnimation = '';
+
 	this.play = function (animName, conf) {
+		if (this._currentAnimation === animName) {
+			return;
+		}
+		this._currentAnimation = animName;
 		var action = new THREE.AnimationAction(this.animations[animName]);
 		var scope = this;
 		this.mixer.removeAllActions();
@@ -49,6 +55,10 @@ THREE.BlendCharacter = function (geometry, material) {
 	};
 
 	this.crossfadeTo = function (animName, duration, conf) {
+		if (this._currentAnimation === animName) {
+			return;
+		}
+		this._currentAnimation = animName;
 		var scope = this;
 		var toAction = null;
 		_.each(this.mixer.actions, function (action) {

@@ -3,7 +3,7 @@ var Sensor = require('./util/sensor');
 var handleSensorCollision = function (a, b) {
 	if (b === a.attacker._target) {
 		// must stop first else idle will be the last thing we've triggered
-		a.traveller.stop();
+		// a.traveller.stop();
 		if (!a.attacker._attacking) {
 			a.attacker.emit('attacker.started');
 			a.attacker._attacking = true;
@@ -30,10 +30,14 @@ Attacker.prototype = {
 		if (this._target) {
 			if (!this._attackSensor.check([this._target])) {
 				if (this._parent.hasBehaviour('traveller')) {
-					this._parent.traveller.setDestination(this._target.position);
+					// this._parent.traveller.setDestination(this._target.position);
 				}
 			}
 		}
+	},
+
+	attack: function () {
+		this._parent.avatar.play && this._parent.avatar.play('Attack');
 	},
 
 	applyAttack: function () {

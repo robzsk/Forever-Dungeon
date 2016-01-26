@@ -24,7 +24,7 @@ var degs = function () {
 
 // NOTE: three.js will make calls to Math.random which will throw out our seed
 // need to find a way around this
-var r = 0.6155678408686072;// Math.random();
+var r = 0.6155678408687072;// Math.random();
 Math.seedrandom(r);
 console.log('Using seed ' + r);
 
