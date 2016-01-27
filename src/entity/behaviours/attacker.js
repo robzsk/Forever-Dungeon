@@ -21,6 +21,10 @@ var Attacker = function (parent) {
 	Minivents(this);
 };
 
+var canAnimate = function (a) {
+	return a.getCurrentAnimation() !== 'Attack';
+};
+
 Attacker.prototype = {
 	init: function () {
 		//
@@ -37,7 +41,15 @@ Attacker.prototype = {
 	},
 
 	attack: function () {
-		this._parent.avatar.play && this._parent.avatar.play('Attack');
+		var a = this._parent.avatar;
+		if (canAnimate(a)) {
+			a.play && a.play('Attack', {
+				loopOnce: true,
+				onComplete: function () {
+					console.log('completed attack');
+				}
+			});
+		}
 	},
 
 	applyAttack: function () {

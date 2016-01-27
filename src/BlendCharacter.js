@@ -30,6 +30,10 @@ THREE.BlendCharacter = function (geometry, material) {
 
 	this._currentAnimation = '';
 
+	this.getCurrentAnimation = function () {
+		return this._currentAnimation;
+	};
+
 	this.play = function (animName, conf) {
 		if (this._currentAnimation === animName) {
 			return;
@@ -44,8 +48,10 @@ THREE.BlendCharacter = function (geometry, material) {
 		conf = conf || {};
 		action.loop = conf.loopOnce ? THREE.LoopOnce : THREE.Loop;
 		if (conf.onComplete) {
+			// loopOnce is required for this to be called
 			this.mixer.addEventListener('finished', function anon () {
 				scope.mixer.removeEventListener('finished', anon);
+				scope._currentAnimation = '';
 				conf.onComplete();
 			});
 		}

@@ -22,14 +22,6 @@ var Player = function (pos) {
 
 	this.avatar = assets.get('player');
 
-	this.traveller.on('traveller.run', function () {
-		scope.avatar.play('Run');
-	});
-
-	this.traveller.on('traveller.idle', function () {
-		scope.avatar.crossfadeTo('Idle');
-	});
-
 	// input
 	var getD = function (a) {
 		return {
@@ -53,18 +45,18 @@ var Player = function (pos) {
 
 		// reset velocity
 		if (!m.up && !m.down && !m.left && !m.right) {
-			t.setVelocity();
+			t.stop();
 		}
 
 		if (m.attack) {
-			scope.avatar.crossfadeTo('Attack');
+			scope.attacker.attack();
 		} else {
 			var d = '';
 			if (m.up) d += 'N';
 			if (m.down) d += 'S';
 			if (m.left) d += 'W';
 			if (m.right) d += 'E';
-			t.setVelocity(D[d]);
+			t.travel(D[d]);
 		}
 	});
 

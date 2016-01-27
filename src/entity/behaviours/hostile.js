@@ -9,7 +9,7 @@ var handleSensorCollision = function (a, b) {
 		vel.x -= a.position.x;
 		vel.y -= a.position.y;
 		vel.normalize().multiplyScalar(0.1);
-		a.traveller.setVelocity(vel);
+		a.traveller.travel(vel);
 
 		a.attacker.setTarget(b);
 	}
@@ -31,7 +31,7 @@ Hostile.prototype = {
 	update: function (world) {
 		if (!this._hostileSensor.check([world.player])) {
 			if (this._parent.hasBehaviour('traveller')) {
-				this._parent.traveller.setVelocity();
+				this._parent.traveller.travel();
 			}
 		}
 	}

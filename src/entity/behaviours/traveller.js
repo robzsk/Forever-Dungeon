@@ -50,6 +50,10 @@ var getAngle = function (vec2) {
 	return Math.atan2(vec2.y, vec2.x);
 };
 
+var canAnimate = function (a) {
+	return a.getCurrentAnimation && a.getCurrentAnimation() !== 'Attack';
+};
+
 var Traveller = function (parent) {
 	this._parent = parent;
 	this._velocity = new THREE.Vector2();
@@ -66,37 +70,64 @@ Traveller.prototype = {
 		this._currentAngle = shortestAngle(this._targetAngle, this._currentAngle, 0.4);
 	},
 
-	setVelocity: function (v) {
+	stop: function () {
+		this._velocity.set(0, 0);
+	},
+
+	travel: function (v) {
+		var a = this._parent.avatar;
+
+		// if (!canAnimate(a)) {
+		// 	this._velocity.set(0, 0);
+		// 	return;
+		// }
+
 		if (v) {
 			this._velocity.set(v.x, v.y);
 			if (v.x !== 0 || v.y !== 0) {
 				this._targetAngle = getAngle(v);
-				this._parent.avatar.play && this._parent.avatar.play('Run');
 			}
 		} else {
 			this._velocity.set(0, 0);
-			this._parent.avatar.crossfadeTo && this._parent.avatar.crossfadeTo('Idle');
 		}
+
 	},
 
 	init: function () {
 		// this._destination.copy(this._parent.position);
 	},
 
+	animate: function () {
+		var a = this._parent.avatar;
+		if (canAnimate(a)) {
+			var v = this._velocity;
+			if (v.x !== 0 || v.y !== 0) {
+				a.play && a.play('Run');
+			} else {
+				a.crossfadeTo && a.crossfadeTo('Idle');
+			}
+		}
+	},
+
 	update: function (world) {
 		var p = this._parent.position;
 		var v = this._velocity;
-		var a = this._parent.avatar.position;
+		var a = this._parent.avatar;
+		var ap = a.position;
 
-		p.x += v.x;
-		p.y += v.y;
+		if (canAnimate(a)) {
+			p.x += v.x;
+			p.y += v.y;
+		}
 
 		this._collisions.check(world.entities);
 
 		// set avatar position
-		a.set(p.x, p.y, a.z);
+		ap.set(p.x, p.y, ap.z);
 		this.updateAngle();
-		this._parent.avatar.rotation.y = this._currentAngle - rads(270);
+		a.rotation.y = this._currentAngle - rads(270);
+
+		this.animate();
 
 	}
 };
