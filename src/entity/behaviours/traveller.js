@@ -46,8 +46,8 @@ var shortestAngle = function (from, to, n) {
 	return clamp(ret);
 };
 
-var getAngle = function (vec2) {
-	return Math.atan2(vec2.y, vec2.x);
+var getAngle = function (v) {
+	return Math.atan2(v.y, v.x);
 };
 
 var canAnimate = function (a) {

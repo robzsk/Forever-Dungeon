@@ -1,7 +1,7 @@
 var Input = require('../engine/input');
 var input = new Input({
-	// gamepad: { index: 0 },
-	// buttons: { left: 14, right: 15, attack: 0 },
+	gamepad: { index: 0 },
+	buttons: { left: 14, right: 15, up: 12, down: 13, attack: 0 },
 	keys: { left: 37, right: 39, up: 38, down: 40, attack: 90 }
 });
 
@@ -39,6 +39,13 @@ var Player = function (pos) {
 		NW: getD(270),
 	};
 
+	var axis = new THREE.Vector2();
+	input.on('gamepad.axis', function (x, y) {
+		axis.x = (x * Math.cos(rads(45)) - (-y * Math.sin(45)));
+		axis.y = (-y * Math.cos(rads(45)) + (x * Math.sin(45)));
+		axis.normalize().multiplyScalar(0.4);
+	});
+
 	input.on('input.move', function (m) {
 		var direction = 0;
 		var t = scope.traveller;
@@ -61,7 +68,11 @@ var Player = function (pos) {
 	});
 
 	this.updateInput = function (ticks) {
+		axis.set(0, 0);
 		input.update(ticks);
+		if (axis.x || axis.y) {
+			this.traveller.travel(axis);
+		}
 	};
 	// end input
 
