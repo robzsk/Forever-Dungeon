@@ -1,3 +1,5 @@
+var THREE = require('three');
+var Minivents = require('minivents');
 var Sensor = require('./util/sensor');
 
 var handleSensorCollision = function (a, b) {

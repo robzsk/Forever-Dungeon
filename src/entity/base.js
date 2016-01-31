@@ -1,3 +1,5 @@
+var THREE = require('three');
+var _ = require('underscore');
 var behaviours = require('./behaviours');
 
 var Entity = function (properties) {

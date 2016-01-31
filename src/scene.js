@@ -1,3 +1,5 @@
+var THREE = require('three');
+var _ = require('underscore');
 var $ = require('jquery');
 var loop = require('./engine/loop');
 

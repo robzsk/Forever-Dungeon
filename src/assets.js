@@ -1,4 +1,8 @@
+var THREE = require('three');
+var _ = require('underscore');
+var util = require('./util');
 require('./BlendCharacter');
+
 var SCALE = 2,
 	basePath = './assets/';
 
@@ -31,7 +35,7 @@ var onComplete = function (callback) {
 				c.mesh = new THREE.Mesh(c.geometry, material);
 			}
 			// Blender uses z up, three uses y up. compo here
-			c.mesh.rotation.x = rads(90);
+			c.mesh.rotation.x = util.rads(90);
 		});
 		callback();
 	}

@@ -1,3 +1,6 @@
+var THREE = require('three');
+var Minivents = require('minivents');
+var util = require('../../util');
 var Sensor = require('./util/sensor');
 
 // where a and b are entities
@@ -125,7 +128,7 @@ Traveller.prototype = {
 		// set avatar position
 		ap.set(p.x, p.y, ap.z);
 		this.updateAngle();
-		a.rotation.y = this._currentAngle - rads(270);
+		a.rotation.y = this._currentAngle - util.rads(270);
 
 		this.animate();
 

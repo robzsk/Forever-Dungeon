@@ -1,6 +1,9 @@
-var cA = new SAT.Circle(),
-	cB = new SAT.Circle(),
-	response = new SAT.Response();
+var SAT = require('sat');
+var _ = require('underscore');
+var Minivents = require('minivents');
+var cA = new SAT.Circle();
+var cB = new SAT.Circle();
+var response = new SAT.Response();
 
 var copyToCircle = function (e, c, r) {
 	c.pos.x = e.position.x;

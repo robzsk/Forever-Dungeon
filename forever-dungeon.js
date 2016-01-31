@@ -2,25 +2,9 @@
 
 require('seedrandom');
 
-var THREE = require('three'),
-	SAT = require('sat'),
-	_ = require('underscore'),
-	assets = require('./src/assets'),// TODO: don't want this here
-	Minivents = require('minivents');
-
-var rads = function () {
-	var R = Math.PI / 180;
-	return function (d) {
-		return d * R;
-	};
-}();
-
-var degs = function () {
-	var D = 180 / Math.PI;
-	return function (r) {
-		return r * D;
-	};
-}();
+var THREE = require('three');
+var _ = require('underscore');
+var assets = require('./src/assets');
 
 // NOTE: three.js will make calls to Math.random which will throw out our seed
 // need to find a way around this

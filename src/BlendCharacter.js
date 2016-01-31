@@ -1,3 +1,6 @@
+var THREE = require('three');
+var _ = require('underscore');
+
 /**
  * @author Michael Guerrero / http://realitymeltdown.com
  */

@@ -1,3 +1,5 @@
+var THREE = require('three');
+var util = require('../util');
 var Input = require('../engine/input');
 var input = new Input({
 	gamepad: { index: 0 },
@@ -25,7 +27,7 @@ var Player = function (pos) {
 	// input
 	var getD = function (a) {
 		return {
-			x: Math.sin(rads(a)) * 0.4, y: Math.cos(rads(a)) * 0.4
+			x: Math.sin(util.rads(a)) * 0.4, y: Math.cos(util.rads(a)) * 0.4
 		};
 	};
 	var D = {
@@ -41,14 +43,13 @@ var Player = function (pos) {
 
 	var axis = new THREE.Vector2();
 	input.on('gamepad.axis', function (x, y) {
-		axis.x = (x * Math.cos(rads(45)) - (-y * Math.sin(45)));
-		axis.y = (-y * Math.cos(rads(45)) + (x * Math.sin(45)));
+		axis.x = (x * Math.cos(util.rads(45)) - (-y * Math.sin(45)));
+		axis.y = (-y * Math.cos(util.rads(45)) + (x * Math.sin(45)));
 		axis.normalize().multiplyScalar(0.4);
 	});
 
 	input.on('gamepad.axis.stop', function () {
 		scope.traveller.stop();
-		console.log('called');
 	});
 
 	input.on('input.move', function (m) {
