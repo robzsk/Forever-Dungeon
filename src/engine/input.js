@@ -41,6 +41,7 @@ var GamepadInput = function (index, buttons) {
 
 	EventEmitter.call(this);
 
+	var activeAxis = false;
 	this.update = function (tick) {
 		var pad = gamepads.get(index);
 		var joystickX;
@@ -52,9 +53,13 @@ var GamepadInput = function (index, buttons) {
 			var jX = applyDeadzone(pad.axes[0], 0.25);
 			var jY = applyDeadzone(pad.axes[1], 0.25);
 
-			// if (jX !== 0 || jY !== 0) {
-			self.emit('gamepad.axis', jX, jY);
-		// }
+			if (jX !== 0 || jY !== 0) {
+				activeAxis = true;
+				self.emit('gamepad.axis', jX, jY);
+			} else if (activeAxis) {
+				activeAxis = false;
+				self.emit('gamepad.axis.stop');
+			}
 		}
 		if (!_.isMatch(current, prev)) {
 			self.emit('input.move', _.clone(current));
@@ -118,6 +123,9 @@ var UserInput = function (config) {
 		gamepad.on('gamepad.axis', function (x, y) {
 			self.emit('gamepad.axis', x, y);
 		});
+		gamepad.on('gamepad.axis.stop', function () {
+			self.emit('gamepad.axis.stop');
+		});
 	}
 	if (typeof config.keys === 'object') {
 		keyboard = new KeyboardInput(config.keys);
@@ -128,6 +136,7 @@ var UserInput = function (config) {
 		moves = {};
 		self.removeAllListeners('input.move');
 		self.removeAllListeners('gamepad.axis');
+		self.removeAllListeners('gamepad.axis.stop');
 	};
 
 	this.serialize = function () {

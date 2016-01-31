@@ -46,6 +46,11 @@ var Player = function (pos) {
 		axis.normalize().multiplyScalar(0.4);
 	});
 
+	input.on('gamepad.axis.stop', function () {
+		scope.traveller.stop();
+		console.log('called');
+	});
+
 	input.on('input.move', function (m) {
 		var direction = 0;
 		var t = scope.traveller;
